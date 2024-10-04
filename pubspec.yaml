@@ -12,7 +12,8 @@ dependencies:
     sdk: flutter
   
   cupertino_icons: ^1.0.6
-  
+  carousel_slider: ^4.2.1
+  http: ^1.2.2
   # Corrected RxDart package
   rxdart: ^0.28.0
 
