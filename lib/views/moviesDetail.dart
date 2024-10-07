@@ -1,7 +1,16 @@
 import 'package:flutter/cupertino.dart';
 
 class MovieDetailsPage extends StatelessWidget {
-  const MovieDetailsPage({super.key});
+  const MovieDetailsPage({
+    super.key,
+    required this.title,
+    required this.isDarkMode,
+    required this.toggleTheme,
+  });
+
+  final String title;
+  final bool isDarkMode;
+  final VoidCallback toggleTheme;
 
   @override
   Widget build(BuildContext context) {

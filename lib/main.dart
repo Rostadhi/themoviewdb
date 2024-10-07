@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
       theme: CupertinoThemeData(
         brightness: isDarkMode ? Brightness.dark : Brightness.light, // Toggle between dark and light mode
       ),
-      home: CupertinoTabBarPage(isDarkMode: isDarkMode, toggleTheme: toggleTheme),
+      home: MainTabBar(isDarkMode: isDarkMode, toggleTheme: toggleTheme),
     );
   }
 }
