@@ -5,10 +5,13 @@ import 'package:otaku_movie_app/models/model.dart';
 const apiKey = "589b8a5511310b4abb4382fe9d23b31c";
 
 class APIservice {
-  final nowShowingApi = "https://api.themoviedb.org/3/movie/now_playing?api_key=$apiKey";
-  final upComingApi = "https://api.themoviedb.org/3/movie/upcoming?api_key=$apiKey";
-  final popularApi = "https://api.themoviedb.org/3/movie/popular?api_key=$apiKey";
+  // Discover Now Showing Animation/Anime Movies (Released after a certain date)
+  final nowShowingApi = "https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=16&primary_release_date.gte=2023-01-01";
 
+  // Discover Popular Animation/Anime Movies
+  final popularApi = "https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=16&sort_by=popularity.desc";
+
+  // Fetch 'Now Showing' Animation Movies
   Future<List<Movie>> getNowShowing() async {
     Uri url = Uri.parse(nowShowingApi);
     final response = await http.get(url);
@@ -18,10 +21,11 @@ class APIservice {
       List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
       return movies;
     } else {
-      throw Exception("Failed to load data");
+      throw Exception("Failed to load data: ${response.body}");
     }
   }
 
+  // Fetch Popular Animation Movies
   Future<List<Movie>> getPopular() async {
     Uri url = Uri.parse(popularApi);
     final response = await http.get(url);
@@ -31,7 +35,7 @@ class APIservice {
       List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
       return movies;
     } else {
-      throw Exception("Failed to load data");
+      throw Exception("Failed to load data: ${response.body}");
     }
   }
 }
