@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:otaku_movie_app/views/home.dart'; // Import the new home file
+import 'package:otaku_movie_app/tabbar.dart'; // Import the new TabBar file
 
 void main() {
   runApp(const MyApp());
@@ -9,12 +9,13 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
   bool isDarkMode = false;
 
+  // Function to toggle the theme
   void toggleTheme() {
     setState(() {
       isDarkMode = !isDarkMode;
@@ -24,15 +25,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      title: 'OMO -> Otaku Movie',
       theme: CupertinoThemeData(
-        brightness: isDarkMode ? Brightness.dark : Brightness.light,
+        brightness: isDarkMode ? Brightness.dark : Brightness.light, // Toggle between dark and light mode
       ),
-      home: MyHomePage(
-        title: 'Otaku Movie',
-        isDarkMode: isDarkMode,
-        toggleTheme: toggleTheme,
-      ),
+      home: CupertinoTabBarPage(isDarkMode: isDarkMode, toggleTheme: toggleTheme),
     );
   }
 }
