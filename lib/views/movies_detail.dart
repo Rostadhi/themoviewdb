@@ -15,9 +15,7 @@ class MovieDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Movie Details'),
-      ),
+      navigationBar: CupertinoNavigationBar(),
       child: Center(
         child: Text(
           'This is the Movie Details Page',
