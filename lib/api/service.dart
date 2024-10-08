@@ -16,6 +16,7 @@ class APIservice {
     Uri url = Uri.parse(nowShowingApi);
     final response = await http.get(url);
 
+    /// you can add another status code for debugging
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['results'];
       List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
@@ -30,12 +31,28 @@ class APIservice {
     Uri url = Uri.parse(popularApi);
     final response = await http.get(url);
 
+    /// you can add another status code for debugging
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['results'];
       List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
       return movies;
     } else {
       throw Exception("Failed to load data: ${response.body}");
+    }
+  }
+
+  // Fetch Detailed Movie Info by Movie ID
+  Future<Movie> getMovieDetail(int movieId) async {
+    final movieDetailsApi = "https://api.themoviedb.org/3/movie/$movieId?api_key=$apiKey";
+
+    Uri url = Uri.parse(movieDetailsApi);
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return Movie.fromMap(data); // Convert JSON to Movie model
+    } else {
+      throw Exception("Failed to load movie details: ${response.body}");
     }
   }
 }

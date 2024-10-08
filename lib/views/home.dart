@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 import 'package:otaku_movie_app/api/service.dart';
 import '../models/model.dart';
 
