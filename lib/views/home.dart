@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
             CupertinoIcons.search,
             color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
           ),
-          onPressed: () {},
+          onPressed: () {}, // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
         ),
         backgroundColor: widget.isDarkMode ? CupertinoColors.black.withOpacity(0.8) : CupertinoColors.white,
       ),
