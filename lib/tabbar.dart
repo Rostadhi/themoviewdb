@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/views/home.dart'; // Import the home page
-import 'package:otaku_movie_app/views/moviesDetail.dart'; // Import the movie detail page
+import 'package:otaku_movie_app/views/movies_detail.dart'; // Import the movie detail page
 import 'package:otaku_movie_app/views/bookmark.dart'; // Import the bookmark page
 
 class MainTabBar extends StatelessWidget {
