@@ -17,7 +17,7 @@ class UpcomingMovie extends StatefulWidget {
 }
 
 class _UpcomingPageState extends State<UpcomingMovie> {
-  int currentId = 16;
+  int currentId = 0;
   late Future<List<Movie>> upcomingMovies;
 
   @override
@@ -28,142 +28,128 @@ class _UpcomingPageState extends State<UpcomingMovie> {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black;
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.title),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: Icon(
-            CupertinoIcons.bookmark,
-            color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
-          onPressed: () {},
+        middle: Text(
+          widget.title,
+          style: TextStyle(color: textColor),
         ),
       ),
-      child: FutureBuilder<List<Movie>>(
-        future: upcomingMovies,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CupertinoActivityIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No upcoming movies found.'));
-          }
-
-          final movies = snapshot.data!;
-          final currentMovie = movies[currentId];
-
-          return Column(
-            children: [
-              const SizedBox(height: 20),
-              const Text(
-                "Upcoming Movie",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                  color: CupertinoColors.black,
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                const Center(
+                  child: Text(
+                    "List Of Upcoming Movies",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      color: CupertinoColors.black,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
+                FutureBuilder<List<Movie>>(
+                  future: upcomingMovies,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CupertinoActivityIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No upcoming movies found.'));
+                    }
 
-              // Image of the current movie
-              Expanded(
-                child: PageView.builder(
-                  itemCount: movies.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      currentId = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(
-                          "https://image.tmdb.org/t/p/original/${movies[index].posterPath ?? ''}",
-                          width: 250,
-                          height: 350,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(child: Text("Image not available"));
-                          },
-                        ),
+                    final movies = snapshot.data!;
+
+                    return SizedBox(
+                      height: 600,
+                      child: PageView.builder(
+                        onPageChanged: (index) {
+                          setState(() {
+                            currentId = index;
+                          });
+                        },
+                        itemCount: movies.length,
+                        controller: PageController(viewportFraction: 0.8),
+                        itemBuilder: (context, index) {
+                          final movie = movies[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Transform.scale(
+                              scale: index == currentId ? 1.0 : 0.9, // Shrink effect on non-centered items
+                              child: Column(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(
+                                      movie.backDropPath != null ? 'https://image.tmdb.org/t/p/w500/${movie.backDropPath}' : 'https://via.placeholder.com/300x450.png?text=No+Image',
+                                      fit: BoxFit.cover,
+                                      width: 300, // Set the desired width
+                                      height: 400, // Set the desired height
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    movie.title ?? 'No Title',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        CupertinoIcons.star_fill,
+                                        color: CupertinoColors.systemYellow,
+                                        size: 18,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        '${movie.voteAverage?.toStringAsFixed(1) ?? 'N/A'} IMDb',
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 15),
+                                  CupertinoButton(
+                                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                                    color: CupertinoColors.systemGrey5,
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(CupertinoIcons.bookmark),
+                                        SizedBox(width: 10),
+                                        Text('Bookmark'),
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      // Add bookmark functionality
+                                    },
+                                  ),
+                                  const SizedBox(height: 30),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     );
                   },
                 ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Movie title
-              Text(
-                currentMovie.title ?? '',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              // Movie tagline (or sub-title)
-              Text(
-                currentMovie.description ?? "No description available",
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: CupertinoColors.systemGrey,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              // Movie rating
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    CupertinoIcons.star_fill,
-                    color: CupertinoColors.systemYellow,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    "${currentMovie.voteAverage?.toStringAsFixed(1) ?? '0.0'} IMDb",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: CupertinoColors.black,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 10),
-
-              // Bookmark button
-              CupertinoButton(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: CupertinoColors.black),
-                  ),
-                  child: const Text(
-                    "Bookmark",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: CupertinoColors.black,
-                    ),
-                  ),
-                ),
-                onPressed: () {
-                  // Add bookmark logic here
-                },
-              ),
-
-              const SizedBox(height: 20),
-            ],
-          );
-        },
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
