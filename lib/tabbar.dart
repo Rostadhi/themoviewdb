@@ -24,9 +24,9 @@ class MainTabBar extends StatelessWidget {
           case 0:
             return MyHomePage(title: "Otaku Movie", isDarkMode: isDarkMode, toggleTheme: toggleTheme);
           case 1:
-            return UpcomingMovie(title: "Upcoming Movie", isDarkMode: isDarkMode, toggleTheme: toggleTheme); // Other pages also respond to dark mode
+            return UpcomingMovie(title: "Upcoming Movie", isDarkMode: isDarkMode);
           case 2:
-            return BookmarkPage(title: "Bookmark Movie", isDarkMode: isDarkMode, toggleTheme: toggleTheme);
+            return BookmarkPage(title: "Bookmark Movie", isDarkMode: isDarkMode);
           default:
             return Container();
         }

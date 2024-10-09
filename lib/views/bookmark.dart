@@ -1,16 +1,10 @@
 import 'package:flutter/cupertino.dart';
 
 class BookmarkPage extends StatelessWidget {
-  const BookmarkPage({
-    super.key,
-    required this.title,
-    required this.isDarkMode,
-    required this.toggleTheme,
-  });
+  const BookmarkPage({super.key, required this.title, required this.isDarkMode});
 
   final String title;
   final bool isDarkMode;
-  final VoidCallback toggleTheme;
 
   @override
   Widget build(BuildContext context) {
