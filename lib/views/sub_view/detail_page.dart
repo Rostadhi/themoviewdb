@@ -162,7 +162,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 color: CupertinoColors.systemGrey5,
                                 borderRadius: BorderRadius.circular(20),
                                 child: Text(
-                                  company.name ?? 'N/A',
+                                  company.name,
                                   style: const TextStyle(fontSize: 12),
                                 ),
                                 onPressed: () {},

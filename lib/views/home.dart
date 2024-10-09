@@ -35,11 +35,11 @@ class _MyHomePageState extends State<MyHomePage> {
       navigationBar: CupertinoNavigationBar(
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
+          onPressed: widget.toggleTheme,
           child: Icon(
             widget.isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
             color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
           ),
-          onPressed: widget.toggleTheme,
         ),
         middle: Text(
           widget.title,
@@ -252,8 +252,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     const SizedBox(height: 5),
 
                                     // Movie Duration
-                                    Row(
-                                      children: const [
+                                    const Row(
+                                      children: [
                                         Icon(
                                           CupertinoIcons.time,
                                           size: 14,

@@ -11,6 +11,9 @@ class APIservice {
   // Discover Popular Animation/Anime Movies
   final popularApi = "https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=16&sort_by=popularity.desc";
 
+  // Upcoming Movie
+  final upcomingMovieApi = "https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=16&primary_release_date.gte=2024-10-01&sort_by=release_date.asc";
+
   // Fetch 'Now Showing' Animation Movies
   Future<List<Movie>> getNowShowing() async {
     Uri url = Uri.parse(nowShowingApi);
@@ -29,6 +32,21 @@ class APIservice {
   // Fetch Popular Animation Movies
   Future<List<Movie>> getPopular() async {
     Uri url = Uri.parse(popularApi);
+    final response = await http.get(url);
+
+    /// you can add another status code for debugging
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['results'];
+      List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
+      return movies;
+    } else {
+      throw Exception("Failed to load data: ${response.body}");
+    }
+  }
+
+  // Fetch Upcoming Movies
+  Future<List<Movie>> getUpcoming() async {
+    Uri url = Uri.parse(upcomingMovieApi);
     final response = await http.get(url);
 
     /// you can add another status code for debugging
