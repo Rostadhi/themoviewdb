@@ -54,7 +54,7 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 FutureBuilder<List<Movie>>(
                   future: upcomingMovies,
                   builder: (context, snapshot) {
