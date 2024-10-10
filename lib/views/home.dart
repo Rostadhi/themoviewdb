@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/api/service.dart';
 import '../models/model.dart';
+import '../views/sub_view/search_result.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -54,7 +55,15 @@ class _MyHomePageState extends State<MyHomePage> {
             CupertinoIcons.search,
             color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
           ),
-          onPressed: () {}, // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
+          onPressed: () {
+            // Navigate to the SearchResultPage
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => SearchResultPage(isDarkMode: widget.isDarkMode), // Navigate to the search page
+              ),
+            );
+          }, // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
         ),
         backgroundColor: widget.isDarkMode ? CupertinoColors.black.withOpacity(0.8) : CupertinoColors.white,
       ),

@@ -14,6 +14,11 @@ class APIservice {
   // Upcoming Movie
   final upcomingMovieApi = "https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=16&primary_release_date.gte=2024-10-01&sort_by=release_date.asc";
 
+  // Search Movie
+  Uri getSearchMovieApi(String query) {
+    return Uri.parse("https://api.themoviedb.org/3/search/movie?api_key=$apiKey&query=$query&with_genres=16");
+  }
+
   // Fetch 'Now Showing' Animation Movies
   Future<List<Movie>> getNowShowing() async {
     Uri url = Uri.parse(nowShowingApi);
@@ -71,6 +76,28 @@ class APIservice {
       return Movie.fromMap(data); // Convert JSON to Movie model
     } else {
       throw Exception("Failed to load movie details: ${response.body}");
+    }
+  }
+
+  // Search Movies by Query
+  Future<List<Movie>> searchMovies(String query) async {
+    Uri url = getSearchMovieApi(query); // Get dynamic URL for search
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['results'];
+
+      // Convert the search results into Movie objects
+      List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
+
+      // Filter out movies that don't contain the 'Animation' genre (ID: 16)
+      List<Movie> filteredMovies = movies.where((movie) {
+        return movie.genreIds?.contains(16) ?? false; // Ensure it has genre ID 16 (Animation)
+      }).toList();
+
+      return filteredMovies; // Return only the filtered animation movies
+    } else {
+      throw Exception("Failed to load search results: ${response.body}");
     }
   }
 }

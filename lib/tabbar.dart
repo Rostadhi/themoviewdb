@@ -26,7 +26,11 @@ class MainTabBar extends StatelessWidget {
           case 1:
             return UpcomingMovie(title: "Upcoming Movie", isDarkMode: isDarkMode);
           case 2:
-            return BookmarkPage(title: "Bookmark Movie", isDarkMode: isDarkMode);
+            return BookmarkPage(
+              title: "Bookmark Movie",
+              isDarkMode: isDarkMode,
+              bookmarkedMovies: bookmarkedMovies,
+            );
           default:
             return Container();
         }

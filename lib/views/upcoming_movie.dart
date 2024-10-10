@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/api/service.dart';
 import '../models/model.dart';
+import 'bookmark.dart';
+
+List<Movie> bookmarkedMovies = []; // global variable to store
 
 class UpcomingMovie extends StatefulWidget {
   const UpcomingMovie({
@@ -26,6 +29,10 @@ class _UpcomingPageState extends State<UpcomingMovie> {
     upcomingMovies = APIservice().getUpcoming();
   }
 
+  bool isBookmarked(Movie movie) {
+    return bookmarkedMovies.contains(movie);
+  }
+
   @override
   Widget build(BuildContext context) {
     final textColor = widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black;
@@ -36,21 +43,41 @@ class _UpcomingPageState extends State<UpcomingMovie> {
           widget.title,
           style: TextStyle(color: textColor),
         ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            // Navigate to BookmarkPage and pass the bookmarkedMovies list
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => BookmarkPage(
+                  title: 'Bookmarked Movies',
+                  isDarkMode: widget.isDarkMode,
+                  bookmarkedMovies: bookmarkedMovies,
+                ),
+              ),
+            );
+          },
+          child: Icon(
+            CupertinoIcons.bookmark,
+            color: textColor,
+          ),
+        ),
       ),
       child: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             child: Column(
               children: [
-                const SizedBox(height: 20),
-                const Center(
+                SizedBox(height: 20),
+                Center(
                   child: Text(
                     "List Of Upcoming Movies",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      color: CupertinoColors.black,
+                      fontSize: 22,
+                      color: textColor,
                     ),
                   ),
                 ),
@@ -67,6 +94,11 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                     }
 
                     final movies = snapshot.data!;
+                    if (movies.isEmpty) {
+                      return const Center(
+                        child: Text("No upcoming movies available."),
+                      );
+                    }
 
                     return SizedBox(
                       height: 600,
@@ -80,6 +112,7 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                         controller: PageController(viewportFraction: 0.8),
                         itemBuilder: (context, index) {
                           final movie = movies[index];
+
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Transform.scale(
@@ -89,19 +122,21 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
                                     child: Image.network(
-                                      movie.backDropPath != null ? 'https://image.tmdb.org/t/p/w500/${movie.backDropPath}' : 'https://via.placeholder.com/300x450.png?text=No+Image',
+                                      movie.posterPath != null ? 'https://image.tmdb.org/t/p/w500/${movie.posterPath}' : 'https://via.placeholder.com/300x450.png?text=No+Image',
                                       fit: BoxFit.cover,
                                       width: 300, // Set the desired width
                                       height: 400, // Set the desired height
                                     ),
                                   ),
                                   const SizedBox(height: 20),
-                                  Text(
-                                    movie.title ?? 'No Title',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22,
-                                      color: textColor,
+                                  Center(
+                                    child: Text(
+                                      movie.title ?? 'No Title',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 22,
+                                        color: textColor,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -109,21 +144,23 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Icon(
-                                        CupertinoIcons.star_fill,
+                                        CupertinoIcons.star_circle_fill,
                                         color: CupertinoColors.systemYellow,
-                                        size: 18,
+                                        size: 32,
                                       ),
-                                      const SizedBox(width: 5),
+                                      const SizedBox(width: 12),
                                       Text(
-                                        '${movie.voteAverage?.toStringAsFixed(1) ?? 'N/A'} IMDb',
-                                        style: const TextStyle(fontSize: 16),
+                                        (movie.popularity != null && movie.popularity! > 0) ? '${movie.popularity!.toStringAsFixed(3)} IMDb Popularity' : 'No popularity available',
+                                        style: const TextStyle(fontSize: 14),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 15),
                                   CupertinoButton(
                                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                                    color: CupertinoColors.systemGrey5,
+                                    color: isBookmarked(movie)
+                                        ? CupertinoColors.systemRed // Change color when bookmarked
+                                        : CupertinoColors.systemGrey5,
                                     child: const Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -133,10 +170,18 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                                       ],
                                     ),
                                     onPressed: () {
-                                      // Add bookmark functionality
+                                      setState(() {
+                                        if (isBookmarked(movie)) {
+                                          // Remove the movie from the bookmark list
+                                          bookmarkedMovies.remove(movie);
+                                        } else {
+                                          // Add the movie to the bookmark list
+                                          bookmarkedMovies.add(movie);
+                                        }
+                                      });
                                     },
                                   ),
-                                  const SizedBox(height: 30),
+                                  const SizedBox(height: 20),
                                 ],
                               ),
                             ),
