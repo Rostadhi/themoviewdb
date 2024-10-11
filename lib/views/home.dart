@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/api/service.dart';
 import '../models/model.dart';
 import '../views/sub_view/search_result.dart';
+import '../views/sub_view/detail_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -107,58 +108,72 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemCount: movies.length,
                         itemBuilder: (context, index) {
                           final movie = movies[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Movie Poster
-                                Container(
-                                  width: 150,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      image: NetworkImage("https://image.tmdb.org/t/p/original/${movie.backDropPath}"),
-                                      fit: BoxFit.cover,
-                                    ),
+                          return GestureDetector(
+                            onTap: () {
+                              // Navigate to the detail screen when tapped
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) => DetailScreen(
+                                    movie: movie,
+                                    isDarkMode: widget.isDarkMode,
                                   ),
                                 ),
-                                const SizedBox(height: 5),
-
-                                // Movie Title with Ellipsis if too long
-                                SizedBox(
-                                  width: 150, // Limit the width of the title text to fit the card width
-                                  child: Text(
-                                    movie.title ?? 'No title available',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Movie Poster
+                                  Container(
+                                    width: 150,
+                                    height: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      image: DecorationImage(
+                                        image: NetworkImage("https://image.tmdb.org/t/p/original/${movie.backDropPath}"),
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis, // Truncate long titles
                                   ),
-                                ),
+                                  const SizedBox(height: 5),
 
-                                const SizedBox(height: 2),
+                                  // Movie Title with Ellipsis if too long
+                                  SizedBox(
+                                    width: 150, // Limit the width of the title text to fit the card width
+                                    child: Text(
+                                      movie.title ?? 'No title available',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis, // Truncate long titles
+                                    ),
+                                  ),
 
-                                // Movie Rating (don't show if it's 0.0)
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      CupertinoIcons.star_fill,
-                                      color: CupertinoColors.systemYellow,
-                                      size: 14,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      (movie.voteAverage != null && movie.voteAverage! > 0) ? '${movie.voteAverage!.toStringAsFixed(1)}/10 IMDb' : 'No rating available',
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  const SizedBox(height: 2),
+
+                                  // Movie Rating (don't show if it's 0.0)
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        CupertinoIcons.star_fill,
+                                        color: CupertinoColors.systemYellow,
+                                        size: 14,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        (movie.voteAverage != null && movie.voteAverage! > 0) ? '${movie.voteAverage!.toStringAsFixed(1)}/10 IMDb' : 'No rating available',
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -198,86 +213,100 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemCount: movies.length,
                       itemBuilder: (context, index) {
                         final movie = movies[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 100,
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  image: DecorationImage(
-                                    image: NetworkImage("https://image.tmdb.org/t/p/original/${movie.backDropPath}"),
-                                    fit: BoxFit.cover,
+                        return GestureDetector(
+                          onTap: () {
+                            // Navigate to the detail screen when tapped
+                            Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                builder: (context) => DetailScreen(
+                                  movie: movie,
+                                  isDarkMode: widget.isDarkMode,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    image: DecorationImage(
+                                      image: NetworkImage("https://image.tmdb.org/t/p/original/${movie.backDropPath}"),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Movie Title
-                                    Text(
-                                      movie.title ?? 'No title available',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Movie Title
+                                      Text(
+                                        movie.title ?? 'No title available',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 5),
+                                      const SizedBox(height: 5),
 
-                                    // Movie Rating
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          CupertinoIcons.star_fill,
-                                          color: CupertinoColors.systemYellow,
-                                          size: 14,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          (movie.voteAverage != null && movie.voteAverage! > 0) ? '${movie.voteAverage!.toStringAsFixed(1)}/10 IMDb' : 'No rating available',
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 5),
+                                      // Movie Rating
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            CupertinoIcons.star_fill,
+                                            color: CupertinoColors.systemYellow,
+                                            size: 14,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            (movie.voteAverage != null && movie.voteAverage! > 0) ? '${movie.voteAverage!.toStringAsFixed(1)}/10 IMDb' : 'No rating available',
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 5),
 
-                                    // Movie Genres
-                                    Row(
-                                      children: [
-                                        _buildGenreChip("Horror", widget.isDarkMode),
-                                        const SizedBox(width: 5),
-                                        _buildGenreChip("Mystery", widget.isDarkMode),
-                                        const SizedBox(width: 5),
-                                        _buildGenreChip("Thriller", widget.isDarkMode),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 5),
+                                      // Movie Genres
+                                      Row(
+                                        children: [
+                                          _buildGenreChip("Horror", widget.isDarkMode),
+                                          const SizedBox(width: 5),
+                                          _buildGenreChip("Mystery", widget.isDarkMode),
+                                          const SizedBox(width: 5),
+                                          _buildGenreChip("Thriller", widget.isDarkMode),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 5),
 
-                                    // Movie Duration
-                                    const Row(
-                                      children: [
-                                        Icon(
-                                          CupertinoIcons.time,
-                                          size: 14,
-                                        ),
-                                        SizedBox(width: 5),
-                                        Text(
-                                          "1h 47m",
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                      // Movie Duration
+                                      const Row(
+                                        children: [
+                                          Icon(
+                                            CupertinoIcons.time,
+                                            size: 14,
+                                          ),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            "1h 47m",
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },

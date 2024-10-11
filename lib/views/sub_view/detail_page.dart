@@ -1,28 +1,57 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/models/model.dart';
+import '../bookmark.dart';
+
+List<Movie> bookmarkedMovies = [];
 
 class DetailScreen extends StatefulWidget {
   final Movie movie;
-  const DetailScreen({super.key, required this.movie});
+  final bool isDarkMode;
+
+  const DetailScreen({
+    super.key,
+    required this.movie,
+    required this.isDarkMode,
+  });
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  int currentId = 0;
+  late Future<List<Movie>> upcomingMovies;
+
+  bool isBookmarked(Movie movie) {
+    return bookmarkedMovies.contains(movie);
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final textColor = widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(widget.movie.title ?? 'No Title Available'),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.bookmark),
           onPressed: () {
-            // Bookmark or favorite functionality
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => BookmarkPage(
+                  title: 'Bookmarked Movies',
+                  isDarkMode: widget.isDarkMode,
+                  bookmarkedMovies: bookmarkedMovies,
+                ),
+              ),
+            );
           },
+          child: Icon(
+            CupertinoIcons.bookmark,
+            color: textColor,
+          ),
         ),
       ),
       child: SingleChildScrollView(
@@ -74,17 +103,17 @@ class _DetailScreenState extends State<DetailScreen> {
                       ),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             CupertinoIcons.star_fill,
-                            color: CupertinoColors.systemYellow,
+                            color: textColor,
                             size: 18,
                           ),
                           const SizedBox(width: 5),
                           Text(
                             widget.movie.voteAverage != null ? '${widget.movie.voteAverage!.toStringAsFixed(1)}/10 IMDb' : 'No rating',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
-                              color: CupertinoColors.systemGrey,
+                              color: textColor,
                             ),
                           ),
                         ],
@@ -101,7 +130,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           .map(
                             (genre) => CupertinoButton(
                               padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                              color: CupertinoColors.systemGrey5,
+                              color: textColor,
                               borderRadius: BorderRadius.circular(20),
                               child: Text(
                                 genre.name,
@@ -117,9 +146,9 @@ class _DetailScreenState extends State<DetailScreen> {
                   // Description
                   Text(
                     widget.movie.description ?? 'No Description Available',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: CupertinoColors.systemGrey,
+                      color: textColor,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -159,7 +188,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       children: widget.movie.productionCompanies!
                           .map((company) => CupertinoButton(
                                 padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                color: CupertinoColors.systemGrey5,
+                                color: textColor,
                                 borderRadius: BorderRadius.circular(20),
                                 child: Text(
                                   company.name,
@@ -170,11 +199,11 @@ class _DetailScreenState extends State<DetailScreen> {
                           .toList(),
                     )
                   else
-                    const Text(
+                    Text(
                       "No production company information available.",
                       style: TextStyle(
                         fontSize: 14,
-                        color: CupertinoColors.inactiveGray,
+                        color: textColor,
                       ),
                     ),
                   const SizedBox(height: 20),
@@ -208,18 +237,18 @@ class _DetailScreenState extends State<DetailScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: CupertinoColors.inactiveGray,
+            color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
           ),
         ),
         const SizedBox(height: 5),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: CupertinoColors.black,
+            color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
           ),
         ),
       ],

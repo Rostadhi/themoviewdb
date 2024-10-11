@@ -28,8 +28,8 @@ class _SearchResultPageState extends State<SearchResultPage> {
     final textColor = widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black;
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: const Text('Search Movies'),
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Search Movies'),
       ),
       child: SafeArea(
         child: Column(

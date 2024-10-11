@@ -67,10 +67,10 @@ class _UpcomingPageState extends State<UpcomingMovie> {
       child: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Center(
                   child: Text(
                     "List Of Upcoming Movies",
