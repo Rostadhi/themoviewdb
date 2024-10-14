@@ -24,6 +24,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Movie>> nowShowing;
   late Future<List<Movie>> popularMovies;
 
+  String _selectedLanguage = 'en';
+
   @override
   void initState() {
     super.initState();
@@ -31,17 +33,76 @@ class _MyHomePageState extends State<MyHomePage> {
     popularMovies = APIservice().getPopular();
   }
 
+  void _changeLanguage(String language) {
+    setState(() {
+      _selectedLanguage = language;
+    });
+  }
+
+  void _showLanguageSelection(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (_) => CupertinoActionSheet(
+        title: const Text('Select Language'),
+        actions: [
+          CupertinoActionSheetAction(
+            child: const Text('English'),
+            onPressed: () {
+              _changeLanguage('en');
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Spanish'),
+            onPressed: () {
+              _changeLanguage('es');
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Japanese'),
+            onPressed: () {
+              _changeLanguage('ja');
+              Navigator.pop(context);
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: const Text('Cancel'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: widget.toggleTheme,
-          child: Icon(
-            widget.isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
-            color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: widget.toggleTheme,
+              child: Icon(
+                widget.isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
+                color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              ),
+            ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                _showLanguageSelection(context);
+              },
+              child: Icon(
+                CupertinoIcons.globe,
+                color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              ),
+            ),
+          ],
         ),
         middle: Text(
           widget.title,
