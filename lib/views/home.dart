@@ -3,6 +3,7 @@ import 'package:otaku_movie_app/api/service.dart';
 import '../models/model.dart';
 import '../views/sub_view/search_result.dart';
 import '../views/sub_view/detail_page.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -60,9 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Japanese'),
+            child: const Text('Indonesia'),
             onPressed: () {
-              _changeLanguage('ja');
+              _changeLanguage('in');
               Navigator.pop(context);
             },
           ),

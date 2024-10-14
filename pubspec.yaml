@@ -21,7 +21,7 @@ dependencies:
   flutter_mobx: ^2.0.6
   flutter_localizations:
     sdk: flutter
-    intl: ^0.17.0
+  intl: any
 
 dev_dependencies:
   flutter_test:
