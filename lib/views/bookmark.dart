@@ -100,7 +100,7 @@ class BookmarkPage extends StatelessWidget {
                                                 borderRadius: BorderRadius.circular(15),
                                               ),
                                               child: Text(
-                                                genre.name ?? 'Genre',
+                                                genre.name,
                                                 style: const TextStyle(fontSize: 10),
                                               ),
                                             ),
