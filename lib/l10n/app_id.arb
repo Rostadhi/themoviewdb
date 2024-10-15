@@ -1,26 +1,99 @@
 {
+    "@@locale": "id",
     "now_showing": "Sedang Tayang",
+    "@now_showing": {
+      "description": "Judul untuk bagian yang menampilkan film yang sedang tayang."
+    },
     "popular_movies": "Film Populer",
+    "@popular_movies": {
+      "description": "Judul untuk bagian yang menampilkan film populer."
+    },
     "search_movies": "Cari Film",
+    "@search_movies": {
+      "description": "Teks untuk bilah pencarian untuk mencari film."
+    },
     "bookmarked_movies": "Film yang Ditandai",
+    "@bookmarked_movies": {
+      "description": "Judul untuk bagian yang menampilkan film yang ditandai."
+    },
     "genres": "Genre",
+    "@genres": {
+      "description": "Label untuk genre film."
+    },
     "play_trailer": "Putar Trailer",
+    "@play_trailer": {
+      "description": "Teks tombol untuk memutar trailer film."
+    },
     "bookmark": "Tandai",
+    "@bookmark": {
+      "description": "Teks tombol untuk menandai film."
+    },
     "search": "Cari",
+    "@search": {
+      "description": "Label untuk fungsi pencarian."
+    },
     "check_out": "Periksa",
+    "@check_out": {
+      "description": "Teks tombol untuk memeriksa film atau konten."
+    },
     "cancel": "Batal",
+    "@cancel": {
+      "description": "Tombol untuk membatalkan suatu tindakan."
+    },
     "select_language": "Pilih Bahasa",
+    "@select_language": {
+      "description": "Label untuk memilih bahasa."
+    },
     "change_theme": "Ganti Tema",
+    "@change_theme": {
+      "description": "Label untuk mengubah tema aplikasi."
+    },
     "no_movies_available": "Tidak ada film yang tersedia.",
+    "@no_movies_available": {
+      "description": "Pesan untuk ditampilkan saat tidak ada film yang tersedia di suatu bagian."
+    },
     "error_fetching_data": "Kesalahan dalam mengambil data.",
+    "@error_fetching_data": {
+      "description": "Pesan untuk ditampilkan saat terjadi kesalahan dalam mengambil data."
+    },
     "no_rating_available": "Tidak ada peringkat yang tersedia.",
+    "@no_rating_available": {
+      "description": "Pesan untuk ditampilkan saat film tidak memiliki peringkat."
+    },
     "no_description_available": "Tidak ada deskripsi yang tersedia.",
+    "@no_description_available": {
+      "description": "Pesan untuk ditampilkan saat film tidak memiliki deskripsi."
+    },
     "no_genres_available": "Tidak ada genre yang tersedia.",
+    "@no_genres_available": {
+      "description": "Pesan untuk ditampilkan saat tidak ada genre yang tersedia untuk film."
+    },
     "no_production_company_info": "Tidak ada informasi tentang perusahaan produksi.",
+    "@no_production_company_info": {
+      "description": "Pesan untuk ditampilkan saat tidak ada informasi tentang perusahaan produksi film."
+    },
     "length": "Durasi",
+    "@length": {
+      "description": "Label untuk durasi atau lama film."
+    },
     "release_date": "Tanggal Rilis",
+    "@release_date": {
+      "description": "Label untuk tanggal rilis film."
+    },
     "language": "Bahasa",
+    "@language": {
+      "description": "Label untuk bahasa film."
+    },
     "runtime": "Durasi",
+    "@runtime": {
+      "description": "Label untuk waktu tayang film."
+    },
     "vote_average": "Rata-rata Suara",
-    "popularity": "Popularitas"
-}
+    "@vote_average": {
+      "description": "Label untuk skor rata-rata suara dari sebuah film."
+    },
+    "popularity": "Popularitas",
+    "@popularity": {
+      "description": "Label untuk skor popularitas film."
+    }
+  }

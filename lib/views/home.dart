@@ -3,6 +3,7 @@ import 'package:otaku_movie_app/api/service.dart';
 import '../models/model.dart';
 import '../views/sub_view/search_result.dart';
 import '../views/sub_view/detail_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({
@@ -10,11 +11,13 @@ class MyHomePage extends StatefulWidget {
     required this.title,
     required this.isDarkMode,
     required this.toggleTheme,
+    required this.setLocale,
   });
 
   final String title;
   final bool isDarkMode;
   final VoidCallback toggleTheme;
+  final Function(Locale) setLocale;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -24,8 +27,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Movie>> nowShowing;
   late Future<List<Movie>> popularMovies;
 
-  String _selectedLanguage = 'en';
-
   @override
   void initState() {
     super.initState();
@@ -34,9 +35,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _changeLanguage(String language) {
-    setState(() {
-      _selectedLanguage = language;
-    });
+    Locale newLocale;
+    switch (language) {
+      case 'es':
+        newLocale = const Locale('es');
+        break;
+      case 'in':
+        newLocale = const Locale('id');
+        break;
+      default:
+        newLocale = const Locale('en');
+    }
+    widget.setLocale(newLocale);
   }
 
   void _showLanguageSelection(BuildContext context) {
@@ -62,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
           CupertinoActionSheetAction(
             child: const Text('Indonesia'),
             onPressed: () {
-              _changeLanguage('in');
+              _changeLanguage('id');
               Navigator.pop(context);
             },
           ),
@@ -139,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 // Now Showing Section
                 Text(
-                  "Now Showing",
+                  AppLocalizations.of(context)!.now_showing,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -246,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 // Popular Movies Section
                 Text(
-                  "Popular Movies",
+                  AppLocalizations.of(context)!.popular_movies,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

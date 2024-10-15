@@ -1,26 +1,99 @@
 {
+    "@@locale": "es",
     "now_showing": "En Cartelera",
+    "@now_showing": {
+      "description": "El título para la sección que muestra las películas actualmente en cartelera."
+    },
     "popular_movies": "Películas Populares",
+    "@popular_movies": {
+      "description": "El título para la sección que muestra las películas populares."
+    },
     "search_movies": "Buscar Películas",
+    "@search_movies": {
+      "description": "Texto para la barra de búsqueda para buscar películas."
+    },
     "bookmarked_movies": "Películas Guardadas",
+    "@bookmarked_movies": {
+      "description": "El título para la sección que muestra las películas guardadas."
+    },
     "genres": "Géneros",
+    "@genres": {
+      "description": "La etiqueta para los géneros de las películas."
+    },
     "play_trailer": "Ver Tráiler",
+    "@play_trailer": {
+      "description": "El texto del botón para reproducir el tráiler de la película."
+    },
     "bookmark": "Guardar",
+    "@bookmark": {
+      "description": "El texto del botón para guardar una película."
+    },
     "search": "Buscar",
+    "@search": {
+      "description": "La etiqueta para la funcionalidad de búsqueda."
+    },
     "check_out": "Revisar",
+    "@check_out": {
+      "description": "El texto del botón para revisar una película o contenido."
+    },
     "cancel": "Cancelar",
+    "@cancel": {
+      "description": "Botón para cancelar una acción."
+    },
     "select_language": "Seleccionar Idioma",
+    "@select_language": {
+      "description": "La etiqueta para seleccionar el idioma."
+    },
     "change_theme": "Cambiar Tema",
+    "@change_theme": {
+      "description": "La etiqueta para cambiar el tema de la aplicación."
+    },
     "no_movies_available": "No hay películas disponibles.",
+    "@no_movies_available": {
+      "description": "Mensaje para mostrar cuando no hay películas disponibles en una sección."
+    },
     "error_fetching_data": "Error al obtener los datos.",
+    "@error_fetching_data": {
+      "description": "Mensaje para mostrar cuando hay un error al obtener los datos."
+    },
     "no_rating_available": "No hay calificación disponible.",
+    "@no_rating_available": {
+      "description": "Mensaje para mostrar cuando una película no tiene calificación."
+    },
     "no_description_available": "No hay descripción disponible.",
+    "@no_description_available": {
+      "description": "Mensaje para mostrar cuando una película no tiene descripción."
+    },
     "no_genres_available": "No hay géneros disponibles.",
+    "@no_genres_available": {
+      "description": "Mensaje para mostrar cuando no hay géneros disponibles para una película."
+    },
     "no_production_company_info": "No hay información de la compañía de producción.",
+    "@no_production_company_info": {
+      "description": "Mensaje para mostrar cuando no hay información sobre la compañía de producción de una película."
+    },
     "length": "Duración",
+    "@length": {
+      "description": "Etiqueta para la duración o duración de una película."
+    },
     "release_date": "Fecha de Estreno",
+    "@release_date": {
+      "description": "Etiqueta para la fecha de estreno de una película."
+    },
     "language": "Idioma",
+    "@language": {
+      "description": "Etiqueta para el idioma de una película."
+    },
     "runtime": "Duración",
+    "@runtime": {
+      "description": "Etiqueta para el tiempo de ejecución de una película."
+    },
     "vote_average": "Promedio de Votos",
-    "popularity": "Popularidad"          
-}
+    "@vote_average": {
+      "description": "Etiqueta para la puntuación promedio de votos de una película."
+    },
+    "popularity": "Popularidad",
+    "@popularity": {
+      "description": "Etiqueta para la puntuación de popularidad de una película."
+    }
+  }

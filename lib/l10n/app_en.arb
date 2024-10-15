@@ -1,26 +1,99 @@
 {
-   "now_showing": "Now Showing",
+    "@@locale": "en",
+    "now_showing": "Now Showing",
+    "@now_showing": {
+      "description": "The title for the section displaying currently showing movies."
+    },
     "popular_movies": "Popular Movies",
+    "@popular_movies": {
+      "description": "The title for the section displaying popular movies."
+    },
     "search_movies": "Search Movies",
+    "@search_movies": {
+      "description": "Text for the search bar to search movies."
+    },
     "bookmarked_movies": "Bookmarked Movies",
+    "@bookmarked_movies": {
+      "description": "The title for the section displaying bookmarked movies."
+    },
     "genres": "Genres",
+    "@genres": {
+      "description": "The label for the movie genres."
+    },
     "play_trailer": "Play Trailer",
+    "@play_trailer": {
+      "description": "The button text for playing the movie trailer."
+    },
     "bookmark": "Bookmark",
+    "@bookmark": {
+      "description": "The button text for bookmarking a movie."
+    },
     "search": "Search",
+    "@search": {
+      "description": "The label for the search functionality."
+    },
     "check_out": "Check Out",
+    "@check_out": {
+      "description": "The button text for checking out a movie or content."
+    },
     "cancel": "Cancel",
+    "@cancel": {
+      "description": "Button to cancel an action."
+    },
     "select_language": "Select Language",
+    "@select_language": {
+      "description": "The label for selecting the language."
+    },
     "change_theme": "Change Theme",
+    "@change_theme": {
+      "description": "The label for changing the app's theme."
+    },
     "no_movies_available": "No movies available.",
+    "@no_movies_available": {
+      "description": "Message to show when no movies are available in a section."
+    },
     "error_fetching_data": "Error fetching data.",
+    "@error_fetching_data": {
+      "description": "Message to show when there is an error while fetching data."
+    },
     "no_rating_available": "No rating available.",
+    "@no_rating_available": {
+      "description": "Message to show when a movie does not have a rating."
+    },
     "no_description_available": "No description available.",
+    "@no_description_available": {
+      "description": "Message to show when a movie does not have a description."
+    },
     "no_genres_available": "No genres available.",
+    "@no_genres_available": {
+      "description": "Message to show when no genres are available for a movie."
+    },
     "no_production_company_info": "No production company information available.",
+    "@no_production_company_info": {
+      "description": "Message to show when no production company information is available for a movie."
+    },
     "length": "Length",
+    "@length": {
+      "description": "Label for the length or duration of a movie."
+    },
     "release_date": "Release Date",
+    "@release_date": {
+      "description": "Label for the release date of a movie."
+    },
     "language": "Language",
+    "@language": {
+      "description": "Label for the language of a movie."
+    },
     "runtime": "Runtime",
+    "@runtime": {
+      "description": "Label for the runtime of a movie."
+    },
     "vote_average": "Vote Average",
-    "popularity": "Popularity"           
-}
+    "@vote_average": {
+      "description": "Label for the average vote score of a movie."
+    },
+    "popularity": "Popularity",
+    "@popularity": {
+      "description": "Label for the popularity score of a movie."
+    }
+  }

@@ -1,13 +1,19 @@
 import 'package:flutter/cupertino.dart';
-import 'package:otaku_movie_app/views/home.dart'; // Import the home page
-import 'package:otaku_movie_app/views/upcoming_movie.dart'; // Import the movie detail page
-import 'package:otaku_movie_app/views/bookmark.dart'; // Import the bookmark page
+import 'package:otaku_movie_app/views/home.dart';
+import 'package:otaku_movie_app/views/upcoming_movie.dart';
+import 'package:otaku_movie_app/views/bookmark.dart';
 
 class MainTabBar extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback toggleTheme;
+  final Function(Locale) setLocale;
 
-  const MainTabBar({super.key, required this.isDarkMode, required this.toggleTheme});
+  const MainTabBar({
+    super.key,
+    required this.isDarkMode,
+    required this.toggleTheme,
+    required this.setLocale,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +28,12 @@ class MainTabBar extends StatelessWidget {
       tabBuilder: (context, index) {
         switch (index) {
           case 0:
-            return MyHomePage(title: "Otaku Movie", isDarkMode: isDarkMode, toggleTheme: toggleTheme);
+            return MyHomePage(
+              title: "Otaku Movie",
+              isDarkMode: isDarkMode,
+              toggleTheme: toggleTheme,
+              setLocale: setLocale,
+            );
           case 1:
             return UpcomingMovie(title: "Upcoming Movie", isDarkMode: isDarkMode);
           case 2:
