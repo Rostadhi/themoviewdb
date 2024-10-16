@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/tabbar.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
