@@ -29,7 +29,6 @@ class MainTabBar extends StatelessWidget {
         switch (index) {
           case 0:
             return MyHomePage(
-              title: "Otaku Movie",
               isDarkMode: isDarkMode,
               toggleTheme: toggleTheme,
               setLocale: setLocale,

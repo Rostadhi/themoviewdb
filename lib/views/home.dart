@@ -1,53 +1,26 @@
 import 'package:flutter/cupertino.dart';
+import 'package:mobx/mobx.dart';
 import 'package:otaku_movie_app/api/service.dart';
 import '../models/model.dart';
 import '../views/sub_view/search_result.dart';
 import '../views/sub_view/detail_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:otaku_movie_app/mobx_store.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({
-    super.key,
-    required this.title,
-    required this.isDarkMode,
-    required this.toggleTheme,
-    required this.setLocale,
-  });
-
-  final String title;
+class MyHomePage extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback toggleTheme;
   final Function(Locale) setLocale;
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+  final MovieStore store = MovieStore(); // MobX store instance
 
-class _MyHomePageState extends State<MyHomePage> {
-  late Future<List<Movie>> nowShowing;
-  late Future<List<Movie>> popularMovies;
-
-  @override
-  void initState() {
-    super.initState();
-    nowShowing = APIservice().getNowShowing();
-    popularMovies = APIservice().getPopular();
-  }
-
-  void _changeLanguage(String language) {
-    Locale newLocale;
-    switch (language) {
-      case 'es':
-        newLocale = const Locale('es');
-        break;
-      case 'in':
-        newLocale = const Locale('id');
-        break;
-      default:
-        newLocale = const Locale('en');
-    }
-    widget.setLocale(newLocale);
-  }
+  MyHomePage({
+    super.key,
+    required this.isDarkMode,
+    required this.toggleTheme,
+    required this.setLocale,
+  });
 
   void _showLanguageSelection(BuildContext context) {
     showCupertinoModalPopup(
@@ -58,21 +31,21 @@ class _MyHomePageState extends State<MyHomePage> {
           CupertinoActionSheetAction(
             child: const Text('English'),
             onPressed: () {
-              _changeLanguage('en');
+              setLocale(const Locale('en'));
               Navigator.pop(context);
             },
           ),
           CupertinoActionSheetAction(
             child: const Text('Spanish'),
             onPressed: () {
-              _changeLanguage('es');
+              setLocale(const Locale('es'));
               Navigator.pop(context);
             },
           ),
           CupertinoActionSheetAction(
             child: const Text('Indonesia'),
             onPressed: () {
-              _changeLanguage('id');
+              setLocale(const Locale('id'));
               Navigator.pop(context);
             },
           ),
@@ -89,6 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Fetch movies when the widget is built
+    store.fetchNowShowingMovies();
+    store.fetchPopularMovies();
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         leading: Row(
@@ -96,10 +73,12 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             CupertinoButton(
               padding: EdgeInsets.zero,
-              onPressed: widget.toggleTheme,
-              child: Icon(
-                widget.isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
-                color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              onPressed: toggleTheme,
+              child: Observer(
+                builder: (_) => Icon(
+                  store.isDarkMode ? CupertinoIcons.sun_max : CupertinoIcons.moon,
+                  color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                ),
               ),
             ),
             CupertinoButton(
@@ -107,71 +86,54 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 _showLanguageSelection(context);
               },
-              child: Icon(
-                CupertinoIcons.globe,
-                color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              child: Observer(
+                builder: (_) => Icon(
+                  CupertinoIcons.globe,
+                  color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                ),
               ),
             ),
           ],
         ),
-        middle: Text(
-          widget.title,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+        middle: Observer(
+          builder: (_) => Text(
+            "Otaku Movie",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+            ),
           ),
         ),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: Icon(
-            CupertinoIcons.search,
-            color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
-          onPressed: () {
-            // Navigate to the SearchResultPage
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => SearchResultPage(isDarkMode: widget.isDarkMode), // Navigate to the search page
-              ),
-            );
-          }, // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
-        ),
-        backgroundColor: widget.isDarkMode ? CupertinoColors.black.withOpacity(0.8) : CupertinoColors.white,
       ),
       child: SafeArea(
-        // This ensures content won't overlap with the navigation bar
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Now Showing Section
-                Text(
-                  AppLocalizations.of(context)!.now_showing,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                Observer(
+                  builder: (_) => Text(
+                    AppLocalizations.of(context)!.now_showing,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                FutureBuilder<List<Movie>>(
-                  future: nowShowing,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // Show loading indicator while waiting for the API response
+                Observer(
+                  builder: (_) {
+                    if (store.nowShowingMovies == null || store.nowShowingMovies!.status == FutureStatus.pending) {
                       return const Center(child: CupertinoActivityIndicator());
-                    } else if (snapshot.hasError) {
-                      // Handle errors during the API call
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      // Handle the case where no movies are returned
+                    } else if (store.nowShowingMovies!.status == FutureStatus.rejected) {
+                      return Center(child: Text('Error: ${store.nowShowingMovies!.error}'));
+                    } else if (store.nowShowingMovies!.value == null || store.nowShowingMovies!.value!.isEmpty) {
                       return const Center(child: Text('No movies available.'));
                     }
 
-                    final movies = snapshot.data!;
+                    final movies = store.nowShowingMovies!.value!;
                     return SizedBox(
                       height: 250,
                       child: ListView.builder(
@@ -181,13 +143,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           final movie = movies[index];
                           return GestureDetector(
                             onTap: () {
-                              // Navigate to the detail screen when tapped
                               Navigator.push(
                                 context,
                                 CupertinoPageRoute(
                                   builder: (context) => DetailScreen(
                                     movie: movie,
-                                    isDarkMode: widget.isDarkMode,
+                                    isDarkMode: store.isDarkMode,
                                   ),
                                 ),
                               );
@@ -197,7 +158,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Movie Poster
                                   Container(
                                     width: 150,
                                     height: 200,
@@ -210,25 +170,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ),
                                   ),
                                   const SizedBox(height: 5),
-
-                                  // Movie Title with Ellipsis if too long
                                   SizedBox(
-                                    width: 150, // Limit the width of the title text to fit the card width
+                                    width: 150,
                                     child: Text(
                                       movie.title ?? 'No title available',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                                        color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
                                       ),
                                       maxLines: 1,
-                                      overflow: TextOverflow.ellipsis, // Truncate long titles
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-
                                   const SizedBox(height: 2),
-
-                                  // Movie Rating (don't show if it's 0.0)
                                   Row(
                                     children: [
                                       const Icon(
@@ -253,31 +208,27 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 ),
                 const SizedBox(height: 20),
-
-                // Popular Movies Section
-                Text(
-                  AppLocalizations.of(context)!.popular_movies,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                Observer(
+                  builder: (_) => Text(
+                    AppLocalizations.of(context)!.popular_movies,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                    ),
                   ),
                 ),
-                FutureBuilder<List<Movie>>(
-                  future: popularMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      // Show loading indicator while waiting for the API response
+                Observer(
+                  builder: (_) {
+                    if (store.popularMovies == null || store.popularMovies!.status == FutureStatus.pending) {
                       return const Center(child: CupertinoActivityIndicator());
-                    } else if (snapshot.hasError) {
-                      // Handle errors during the API call
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      // Handle the case where no movies are returned
+                    } else if (store.popularMovies!.status == FutureStatus.rejected) {
+                      return Center(child: Text('Error: ${store.popularMovies!.error}'));
+                    } else if (store.popularMovies!.value == null || store.popularMovies!.value!.isEmpty) {
                       return const Center(child: Text('No movies available.'));
                     }
 
-                    final movies = snapshot.data!;
+                    final movies = store.popularMovies!.value!;
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -286,13 +237,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         final movie = movies[index];
                         return GestureDetector(
                           onTap: () {
-                            // Navigate to the detail screen when tapped
                             Navigator.push(
                               context,
                               CupertinoPageRoute(
                                 builder: (context) => DetailScreen(
                                   movie: movie,
-                                  isDarkMode: widget.isDarkMode,
+                                  isDarkMode: store.isDarkMode,
                                 ),
                               ),
                             );
@@ -317,20 +267,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      // Movie Title
                                       Text(
                                         movie.title ?? 'No title available',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
-                                          color: widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                                          color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
                                         ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(height: 5),
-
-                                      // Movie Rating
                                       Row(
                                         children: [
                                           const Icon(
@@ -346,20 +293,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ],
                                       ),
                                       const SizedBox(height: 5),
-
-                                      // Movie Genres
                                       Row(
                                         children: [
-                                          _buildGenreChip("Horror", widget.isDarkMode),
+                                          _buildGenreChip("Horror", store.isDarkMode),
                                           const SizedBox(width: 5),
-                                          _buildGenreChip("Mystery", widget.isDarkMode),
+                                          _buildGenreChip("Mystery", store.isDarkMode),
                                           const SizedBox(width: 5),
-                                          _buildGenreChip("Thriller", widget.isDarkMode),
+                                          _buildGenreChip("Thriller", store.isDarkMode),
                                         ],
                                       ),
                                       const SizedBox(height: 5),
-
-                                      // Movie Duration
                                       const Row(
                                         children: [
                                           Icon(

@@ -7,43 +7,75 @@ part 'mobx_store.g.dart';
 class MovieStore = _MovieStore with _$MovieStore;
 
 abstract class _MovieStore with Store {
-  // Observable for dark mode
+  // variable that implemented accross the views
+
+  // dark mode
   @observable
   bool isDarkMode = false;
 
-  // Observable for selected language
+  // title
+  @observable
+  String title = '';
+
+  // localization
   @observable
   String selectedLanguage = 'en';
 
-  // Observable for now showing movies
+  // bookmark
+  @observable
+  ObservableList<Movie> bookmarkedMovies = ObservableList<Movie>();
+
+  // now showing
   @observable
   ObservableFuture<List<Movie>>? nowShowingMovies;
 
-  // Observable for popular movies
+  // popular
   @observable
   ObservableFuture<List<Movie>>? popularMovies;
 
-  // Action to toggle the theme
+  // upcoming
+  @observable
+  ObservableFuture<List<Movie>>? upComingMovies;
+
+  // detail
+
+  // search
+
+  // action to trigger the function
+
+  // toggle action for dark mode
   @action
   void toggleTheme() {
     isDarkMode = !isDarkMode;
   }
 
-  // Action to change language
+  // change action for different language
   @action
   void changeLanguage(String language) {
     selectedLanguage = language;
   }
 
-  // Action to fetch now showing movies
+  // action for bookmark
+  @action
+  bool isBookmarked(Movie movie) {
+    return bookmarkedMovies.contains(movie);
+  }
+
+  // fetch now showing
   @action
   Future<void> fetchNowShowingMovies() async {
     nowShowingMovies = ObservableFuture(APIservice().getNowShowing());
   }
 
-  // Action to fetch popular movies
+  // fetch popular
   @action
   Future<void> fetchPopularMovies() async {
     popularMovies = ObservableFuture(APIservice().getPopular());
+  }
+
+  // fetch upcoming
+  @action
+  Future<void> fetchupComingMovies() async {
+    popularMovies = ObservableFuture(APIservice().getUpcoming());
   }
 }
