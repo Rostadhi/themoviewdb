@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:rxdart/rxdart.dart';
 import 'package:otaku_movie_app/models/model.dart';
 
 const apiKey = "589b8a5511310b4abb4382fe9d23b31c";
@@ -13,6 +14,10 @@ class APIservice {
 
   // Upcoming Movie
   final upcomingMovieApi = "https://api.themoviedb.org/3/discover/movie?api_key=$apiKey&with_genres=16&primary_release_date.gte=2024-10-01&sort_by=release_date.asc";
+
+  String getMovieDetailApi(int movieId) {
+    return "https://api.themoviedb.org/3/movie/$movieId?api_key=$apiKey";
+  }
 
   // Search Movie
   Uri getSearchMovieApi(String query) {
@@ -66,9 +71,7 @@ class APIservice {
 
   // Fetch Detailed Movie Info by Movie ID
   Future<Movie> getMovieDetail(int movieId) async {
-    final movieDetailsApi = "https://api.themoviedb.org/3/movie/$movieId?api_key=$apiKey";
-
-    Uri url = Uri.parse(movieDetailsApi);
+    Uri url = Uri.parse(getMovieDetailApi(movieId));
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

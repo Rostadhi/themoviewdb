@@ -1,8 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
-import 'package:otaku_movie_app/api/service.dart';
-import '../models/model.dart';
-import '../views/sub_view/search_result.dart';
 import '../views/sub_view/detail_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
