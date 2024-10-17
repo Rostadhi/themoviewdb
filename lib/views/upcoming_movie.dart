@@ -1,59 +1,44 @@
 import 'package:flutter/cupertino.dart';
-import 'package:otaku_movie_app/api/service.dart';
-import '../models/model.dart';
 import 'bookmark.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:otaku_movie_app/mobx_store.dart';
 
-List<Movie> bookmarkedMovies = []; // global variable to store
+class UpcomingMovie extends StatelessWidget {
+  final String title;
+  final bool isDarkMode;
 
-class UpcomingMovie extends StatefulWidget {
-  const UpcomingMovie({
+  final MovieStore store = MovieStore();
+
+  UpcomingMovie({
     super.key,
     required this.title,
     required this.isDarkMode,
   });
 
-  final String title;
-  final bool isDarkMode;
-
-  @override
-  State<UpcomingMovie> createState() => _UpcomingPageState();
-}
-
-class _UpcomingPageState extends State<UpcomingMovie> {
-  int currentId = 0;
-  late Future<List<Movie>> upcomingMovies;
-
-  @override
-  void initState() {
-    super.initState();
-    upcomingMovies = APIservice().getUpcoming();
-  }
-
-  bool isBookmarked(Movie movie) {
-    return bookmarkedMovies.contains(movie);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final textColor = widget.isDarkMode ? CupertinoColors.white : CupertinoColors.black;
+    // Start listening to upcoming movies stream using RX Dart
+    store.listenToUpcomingWithRx();
+
+    final textColor = isDarkMode ? CupertinoColors.white : CupertinoColors.black;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(
-          widget.title,
+          title,
           style: TextStyle(color: textColor),
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () {
-            // Navigate to BookmarkPage and pass the bookmarkedMovies list
+            // Navigate to BookmarkPage and pass the bookmarkedMovies list from MobX store
             Navigator.push(
               context,
               CupertinoPageRoute(
                 builder: (context) => BookmarkPage(
                   title: 'Bookmarked Movies',
-                  isDarkMode: widget.isDarkMode,
-                  bookmarkedMovies: bookmarkedMovies,
+                  isDarkMode: isDarkMode,
+                  bookmarkedMovies: store.bookmarkedMovies.toList(),
                 ),
               ),
             );
@@ -82,32 +67,21 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                FutureBuilder<List<Movie>>(
-                  future: upcomingMovies,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                Observer(
+                  builder: (_) {
+                    // Observe the RX Dart stream-based observable for upcoming movies
+                    final upcomingMoviesStream = store.upcomingMoviesRx?.value;
+
+                    if (upcomingMoviesStream == null) {
                       return const Center(child: CupertinoActivityIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    } else if (upcomingMoviesStream.isEmpty) {
                       return const Center(child: Text('No upcoming movies found.'));
                     }
 
-                    final movies = snapshot.data!;
-                    if (movies.isEmpty) {
-                      return const Center(
-                        child: Text("No upcoming movies available."),
-                      );
-                    }
-
+                    final movies = upcomingMoviesStream;
                     return SizedBox(
                       height: 600,
                       child: PageView.builder(
-                        onPageChanged: (index) {
-                          setState(() {
-                            currentId = index;
-                          });
-                        },
                         itemCount: movies.length,
                         controller: PageController(viewportFraction: 0.8),
                         itemBuilder: (context, index) {
@@ -116,7 +90,7 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Transform.scale(
-                              scale: index == currentId ? 1.0 : 0.9, // Shrink effect on non-centered items
+                              scale: index == store.bookmarkedMovies.indexOf(movie) ? 1.0 : 0.9,
                               child: Column(
                                 children: [
                                   ClipRRect(
@@ -124,8 +98,8 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                                     child: Image.network(
                                       movie.posterPath != null ? 'https://image.tmdb.org/t/p/w500/${movie.posterPath}' : 'https://via.placeholder.com/300x450.png?text=No+Image',
                                       fit: BoxFit.cover,
-                                      width: 300, // Set the desired width
-                                      height: 400, // Set the desired height
+                                      width: 300,
+                                      height: 400,
                                     ),
                                   ),
                                   const SizedBox(height: 20),
@@ -158,9 +132,7 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                                   const SizedBox(height: 15),
                                   CupertinoButton(
                                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                                    color: isBookmarked(movie)
-                                        ? CupertinoColors.systemRed // Change color when bookmarked
-                                        : CupertinoColors.systemGrey5,
+                                    color: store.isBookmarked(movie) ? CupertinoColors.systemRed : CupertinoColors.systemGrey5,
                                     child: const Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -170,15 +142,11 @@ class _UpcomingPageState extends State<UpcomingMovie> {
                                       ],
                                     ),
                                     onPressed: () {
-                                      setState(() {
-                                        if (isBookmarked(movie)) {
-                                          // Remove the movie from the bookmark list
-                                          bookmarkedMovies.remove(movie);
-                                        } else {
-                                          // Add the movie to the bookmark list
-                                          bookmarkedMovies.add(movie);
-                                        }
-                                      });
+                                      if (store.isBookmarked(movie)) {
+                                        store.bookmarkedMovies.remove(movie);
+                                      } else {
+                                        store.bookmarkedMovies.add(movie);
+                                      }
                                     },
                                   ),
                                   const SizedBox(height: 20),

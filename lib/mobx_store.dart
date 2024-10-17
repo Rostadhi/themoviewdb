@@ -7,6 +7,7 @@ part 'mobx_store.g.dart';
 class MovieStore = _MovieStore with _$MovieStore;
 
 abstract class _MovieStore with Store {
+  final APIservice _apiService = APIservice();
   // variable that implemented accross the views
 
   // dark mode
@@ -40,7 +41,8 @@ abstract class _MovieStore with Store {
   // detail
 
   // search
-
+  @observable
+  ObservableStream<List<Movie>>? searchResults;
   // action to trigger the function
 
   // toggle action for dark mode
@@ -76,6 +78,54 @@ abstract class _MovieStore with Store {
   // fetch upcoming
   @action
   Future<void> fetchupComingMovies() async {
-    popularMovies = ObservableFuture(APIservice().getUpcoming());
+    upComingMovies = ObservableFuture(APIservice().getUpcoming());
+  }
+
+  // Using RX Dart
+  @observable
+  ObservableStream<List<Movie>>? nowShowingMoviesRx;
+
+  @observable
+  ObservableStream<List<Movie>>? popularMoviesRx;
+
+  @observable
+  ObservableStream<List<Movie>>? upcomingMoviesRx;
+
+  @observable
+  ObservableStream<List<Movie>>? searchResultRx;
+
+  @observable
+  ObservableList<Movie> bookmarkedMoviesRx = ObservableList<Movie>();
+
+  @action
+  void listenToNowShowingWithRx() {
+    nowShowingMoviesRx = ObservableStream(_apiService.nowShowingMoviesStream);
+  }
+
+  @action
+  void listenToNowPopularWithRx() {
+    popularMoviesRx = ObservableStream(_apiService.popularMoviesStream);
+  }
+
+  @action
+  void listenToUpcomingWithRx() {
+    upcomingMoviesRx = ObservableStream(_apiService.upcomingMoviesStream);
+    // Trigger fetching of data
+    _apiService.getUpcomingRX();
+  }
+
+  @action
+  void searchMovieWithRx(String query) {
+    _apiService.searchMoviesRX(query);
+    searchResultRx = ObservableStream(_apiService.searchMoviesStream);
+  }
+
+  @action
+  bool isBookmarkedRx(Movie movie) {
+    return bookmarkedMoviesRx.contains(movie);
+  }
+
+  void dispose() {
+    _apiService.dispose();
   }
 }

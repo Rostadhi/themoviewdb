@@ -19,7 +19,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
   void searchMovies(String query) {
     setState(() {
       searchQuery = query;
-      searchResults = APIservice().searchMovies(query); // Call the API service method to search movies
+      searchResults = APIservice().searchMovies(query) as Future<List<Movie>>?; // Call the API service method to search movies
     });
   }
 

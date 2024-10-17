@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/views/home.dart';
+import 'package:otaku_movie_app/views/sub_view/detail_page.dart';
 import 'package:otaku_movie_app/views/upcoming_movie.dart';
 import 'package:otaku_movie_app/views/bookmark.dart';
 
