@@ -4,127 +4,124 @@ import 'package:otaku_movie_app/models/model.dart';
 
 part 'mobx_store.g.dart';
 
+// ignore: library_private_types_in_public_api
 class MovieStore = _MovieStore with _$MovieStore;
 
 abstract class _MovieStore with Store {
   final APIservice _apiService = APIservice();
-  // variable that implemented accross the views
 
-  // dark mode
+  // Dark mode state
   @observable
   bool isDarkMode = false;
 
-  // title
+  // App title
   @observable
   String title = '';
 
-  // localization
+  // Localization state
   @observable
   String selectedLanguage = 'en';
 
-  // bookmark
-  @observable
-  ObservableList<Movie> bookmarkedMovies = ObservableList<Movie>();
-
-  // now showing
+  // Now Showing movies
   @observable
   ObservableFuture<List<Movie>>? nowShowingMovies;
 
-  // popular
+  // Popular movies
   @observable
   ObservableFuture<List<Movie>>? popularMovies;
 
-  // upcoming
+  // Upcoming movies
   @observable
   ObservableFuture<List<Movie>>? upComingMovies;
 
-  // detail
-
-  // search
+  // Search results using RxDart stream
   @observable
-  ObservableStream<List<Movie>>? searchResults;
-  // action to trigger the function
+  ObservableStream<List<Movie>>? searchResultRx;
 
-  // toggle action for dark mode
+  // Bookmarked movies as an observable list
+  @observable
+  ObservableList<Movie> bookmarkedMoviesRx = ObservableList<Movie>();
+
+  // Action to toggle the dark mode
   @action
   void toggleTheme() {
     isDarkMode = !isDarkMode;
   }
 
-  // change action for different language
+  // Action to change the language
   @action
   void changeLanguage(String language) {
     selectedLanguage = language;
   }
 
-  // action for bookmark
+  // Check if a movie is bookmarked
   @action
-  bool isBookmarked(Movie movie) {
-    return bookmarkedMovies.contains(movie);
+  bool isBookmarkedRx(Movie movie) {
+    return bookmarkedMoviesRx.contains(movie);
   }
 
-  // fetch now showing
+  // Toggle bookmark status
+  @action
+  void toggleBookmark(Movie movie) {
+    if (isBookmarkedRx(movie)) {
+      // Remove the movie from both MobX observable list and the global list
+      bookmarkedMoviesRx.remove(movie);
+    } else {
+      // Add the movie to both MobX observable list and the global list
+      bookmarkedMoviesRx.add(movie);
+    }
+  }
+
+  // Fetch Now Showing movies using Future
   @action
   Future<void> fetchNowShowingMovies() async {
-    nowShowingMovies = ObservableFuture(APIservice().getNowShowing());
+    nowShowingMovies = ObservableFuture(_apiService.getNowShowing());
   }
 
-  // fetch popular
+  // Fetch Popular movies using Future
   @action
   Future<void> fetchPopularMovies() async {
-    popularMovies = ObservableFuture(APIservice().getPopular());
+    popularMovies = ObservableFuture(_apiService.getPopular());
   }
 
-  // fetch upcoming
-  @action
-  Future<void> fetchupComingMovies() async {
-    upComingMovies = ObservableFuture(APIservice().getUpcoming());
-  }
-
-  // Using RX Dart
+  // Set up RxDart stream for Now Showing movies
   @observable
   ObservableStream<List<Movie>>? nowShowingMoviesRx;
-
-  @observable
-  ObservableStream<List<Movie>>? popularMoviesRx;
-
-  @observable
-  ObservableStream<List<Movie>>? upcomingMoviesRx;
-
-  @observable
-  ObservableStream<List<Movie>>? searchResultRx;
-
-  @observable
-  ObservableList<Movie> bookmarkedMoviesRx = ObservableList<Movie>();
 
   @action
   void listenToNowShowingWithRx() {
     nowShowingMoviesRx = ObservableStream(_apiService.nowShowingMoviesStream);
+    _apiService.getNowShowingRX();
   }
 
+  // Set up RxDart stream for Popular movies
+  @observable
+  ObservableStream<List<Movie>>? popularMoviesRx;
+
   @action
-  void listenToNowPopularWithRx() {
+  void listenToPopularWithRx() {
     popularMoviesRx = ObservableStream(_apiService.popularMoviesStream);
+    _apiService.getPopularRX();
   }
+
+  // Set up RxDart stream for Upcoming movies
+  @observable
+  ObservableStream<List<Movie>>? upcomingMoviesRx;
 
   @action
   void listenToUpcomingWithRx() {
     upcomingMoviesRx = ObservableStream(_apiService.upcomingMoviesStream);
-    // Trigger fetching of data
     _apiService.getUpcomingRX();
   }
 
+  // Search movies with RxDart
   @action
   void searchMovieWithRx(String query) {
     _apiService.searchMoviesRX(query);
     searchResultRx = ObservableStream(_apiService.searchMoviesStream);
   }
 
-  @action
-  bool isBookmarkedRx(Movie movie) {
-    return bookmarkedMoviesRx.contains(movie);
-  }
-
+  // Dispose resources
   void dispose() {
     _apiService.dispose();
   }

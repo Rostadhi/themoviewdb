@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
+import 'package:otaku_movie_app/views/sub_view/search_result.dart';
 import '../views/sub_view/detail_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -9,14 +10,14 @@ class MyHomePage extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback toggleTheme;
   final Function(Locale) setLocale;
-
-  final MovieStore store = MovieStore(); // MobX store instance
+  final MovieStore store; // MobX store instance
 
   MyHomePage({
     super.key,
     required this.isDarkMode,
     required this.toggleTheme,
     required this.setLocale,
+    required this.store,
   });
 
   void _showLanguageSelection(BuildContext context) {
@@ -101,6 +102,23 @@ class MyHomePage extends StatelessWidget {
             ),
           ),
         ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Icon(
+            CupertinoIcons.search,
+            color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+          ),
+          onPressed: () {
+            // Navigate to the SearchResultPage
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => SearchResultPage(isDarkMode: store.isDarkMode), // Navigate to the search page
+              ),
+            );
+          }, // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
+        ),
+        backgroundColor: store.isDarkMode ? CupertinoColors.black.withOpacity(0.8) : CupertinoColors.white,
       ),
       child: SafeArea(
         child: SingleChildScrollView(
@@ -146,6 +164,7 @@ class MyHomePage extends StatelessWidget {
                                   builder: (context) => DetailScreen(
                                     movie: movie,
                                     isDarkMode: store.isDarkMode,
+                                    store: store,
                                   ),
                                 ),
                               );
@@ -240,6 +259,7 @@ class MyHomePage extends StatelessWidget {
                                 builder: (context) => DetailScreen(
                                   movie: movie,
                                   isDarkMode: store.isDarkMode,
+                                  store: store,
                                 ),
                               ),
                             );

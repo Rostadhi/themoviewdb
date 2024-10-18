@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:otaku_movie_app/mobx_store.dart';
 import 'package:otaku_movie_app/models/model.dart';
 import '../bookmark.dart';
 
@@ -7,11 +8,13 @@ List<Movie> bookmarkedMovies = [];
 class DetailScreen extends StatefulWidget {
   final Movie movie;
   final bool isDarkMode;
+  final MovieStore store;
 
   const DetailScreen({
     super.key,
     required this.movie,
     required this.isDarkMode,
+    required this.store,
   });
 
   @override
@@ -21,6 +24,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   int currentId = 0;
   late Future<List<Movie>> upcomingMovies;
+  final MovieStore store = MovieStore();
 
   bool isBookmarked(Movie movie) {
     return bookmarkedMovies.contains(movie);
@@ -43,7 +47,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 builder: (context) => BookmarkPage(
                   title: 'Bookmarked Movies',
                   isDarkMode: widget.isDarkMode,
-                  bookmarkedMovies: bookmarkedMovies,
+                  store: store,
                 ),
               ),
             );

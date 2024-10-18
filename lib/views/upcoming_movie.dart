@@ -7,12 +7,13 @@ class UpcomingMovie extends StatelessWidget {
   final String title;
   final bool isDarkMode;
 
-  final MovieStore store = MovieStore();
+  final MovieStore store;
 
-  UpcomingMovie({
+  const UpcomingMovie({
     super.key,
     required this.title,
     required this.isDarkMode,
+    required this.store,
   });
 
   @override
@@ -38,7 +39,7 @@ class UpcomingMovie extends StatelessWidget {
                 builder: (context) => BookmarkPage(
                   title: 'Bookmarked Movies',
                   isDarkMode: isDarkMode,
-                  bookmarkedMovies: store.bookmarkedMovies.toList(),
+                  store: store,
                 ),
               ),
             );
@@ -90,7 +91,7 @@ class UpcomingMovie extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Transform.scale(
-                              scale: index == store.bookmarkedMovies.indexOf(movie) ? 1.0 : 0.9,
+                              scale: index == store.bookmarkedMoviesRx.indexOf(movie) ? 1.0 : 0.9,
                               child: Column(
                                 children: [
                                   ClipRRect(
@@ -130,23 +131,25 @@ class UpcomingMovie extends StatelessWidget {
                                     ],
                                   ),
                                   const SizedBox(height: 15),
-                                  CupertinoButton(
-                                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                                    color: store.isBookmarked(movie) ? CupertinoColors.systemRed : CupertinoColors.systemGrey5,
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(CupertinoIcons.bookmark),
-                                        SizedBox(width: 10),
-                                        Text('Bookmark'),
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      if (store.isBookmarked(movie)) {
-                                        store.bookmarkedMovies.remove(movie);
-                                      } else {
-                                        store.bookmarkedMovies.add(movie);
-                                      }
+                                  Observer(
+                                    builder: (_) {
+                                      return CupertinoButton(
+                                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                                        color: store.isBookmarkedRx(movie)
+                                            ? CupertinoColors.systemRed // Color when the movie is bookmarked
+                                            : CupertinoColors.systemGrey5, // Color when the movie is not bookmarked
+                                        child: const Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(CupertinoIcons.bookmark),
+                                            SizedBox(width: 10),
+                                            Text('Bookmark'),
+                                          ],
+                                        ),
+                                        onPressed: () {
+                                          store.toggleBookmark(movie);
+                                        },
+                                      );
                                     },
                                   ),
                                   const SizedBox(height: 20),

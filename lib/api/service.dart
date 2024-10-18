@@ -68,21 +68,6 @@ class APIservice {
     }
   }
 
-  // Fetch Upcoming Movies
-  Future<List<Movie>> getUpcoming() async {
-    Uri url = Uri.parse(upcomingMovieApi);
-    final response = await http.get(url);
-
-    /// you can add another status code for debugging
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body)['results'];
-      List<Movie> movies = data.map((movie) => Movie.fromMap(movie)).toList();
-      return movies;
-    } else {
-      throw Exception("Failed to load data: ${response.body}");
-    }
-  }
-
   // Fetch Detailed Movie Info by Movie ID
   Future<Movie> getMovieDetail(int movieId) async {
     Uri url = Uri.parse(getMovieDetailApi(movieId));

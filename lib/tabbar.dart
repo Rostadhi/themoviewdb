@@ -1,19 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otaku_movie_app/views/home.dart';
-import 'package:otaku_movie_app/views/sub_view/detail_page.dart';
 import 'package:otaku_movie_app/views/upcoming_movie.dart';
 import 'package:otaku_movie_app/views/bookmark.dart';
+import 'package:otaku_movie_app/mobx_store.dart';
 
 class MainTabBar extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback toggleTheme;
   final Function(Locale) setLocale;
+  final MovieStore store;
 
   const MainTabBar({
     super.key,
     required this.isDarkMode,
     required this.toggleTheme,
     required this.setLocale,
+    required this.store,
   });
 
   @override
@@ -33,14 +35,19 @@ class MainTabBar extends StatelessWidget {
               isDarkMode: isDarkMode,
               toggleTheme: toggleTheme,
               setLocale: setLocale,
+              store: store,
             );
           case 1:
-            return UpcomingMovie(title: "Upcoming Movie", isDarkMode: isDarkMode);
+            return UpcomingMovie(
+              title: "Upcoming Movie",
+              isDarkMode: isDarkMode,
+              store: store,
+            );
           case 2:
             return BookmarkPage(
               title: "Bookmark Movie",
               isDarkMode: isDarkMode,
-              bookmarkedMovies: bookmarkedMovies,
+              store: store,
             );
           default:
             return Container();
