@@ -134,7 +134,6 @@ abstract class _MovieStore with Store {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }
-    print('Bookmarked Movies: ${bookmarkedMovies.length}');
     bookmarkedMovies = ObservableList<Movie>.of(bookmarkedMovies);
   }
 
