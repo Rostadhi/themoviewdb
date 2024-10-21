@@ -18,7 +18,8 @@ class BookmarkPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isDarkMode ? CupertinoColors.white : CupertinoColors.black;
-    final bookmarkedMovies = store.bookmarkedMoviesRx;
+    store.initDatabase();
+    store.listenToUpcomingMovies();
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -29,16 +30,19 @@ class BookmarkPage extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Observer(
             builder: (_) {
-              if (bookmarkedMovies.isEmpty) {
-                return const Center(
-                  child: Text('No bookmarked movies available.'),
+              if (store.bookmarkedMovies.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No bookmarked movies available.',
+                    style: TextStyle(color: textColor),
+                  ),
                 );
               }
 
               return ListView.builder(
-                itemCount: bookmarkedMovies.length,
+                itemCount: store.bookmarkedMovies.length,
                 itemBuilder: (context, index) {
-                  final movie = bookmarkedMovies[index];
+                  final movie = store.bookmarkedMovies[index];
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),

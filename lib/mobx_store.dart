@@ -1,6 +1,9 @@
 import 'package:mobx/mobx.dart';
 import 'package:otaku_movie_app/api/service.dart';
 import 'package:otaku_movie_app/models/model.dart';
+import 'dart:async';
+import 'package:path/path.dart' as p;
+import 'package:sqflite/sqflite.dart';
 
 part 'mobx_store.g.dart';
 
@@ -10,119 +13,167 @@ class MovieStore = _MovieStore with _$MovieStore;
 abstract class _MovieStore with Store {
   final APIservice _apiService = APIservice();
 
-  // Dark mode state
+  late final Future<Database> database;
+
+  _MovieStore() {
+    database = initDatabase();
+  }
+
+  Future<Database> initDatabase() async {
+    final databasePath = await getDatabasesPath();
+    final path = p.join(databasePath, 'doggie_database.db');
+
+    return openDatabase(
+      path,
+      version: 2,
+      onCreate: (db, version) async {
+        await _createBookmarkTable(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < newVersion) {
+          await db.execute('DROP TABLE IF EXISTS bookmarks');
+          await _createBookmarkTable(db);
+        }
+      },
+    );
+  }
+
+  Future<void> _createBookmarkTable(Database db) async {
+    await db.execute(
+      'CREATE TABLE bookmarks('
+      'id INTEGER PRIMARY KEY, '
+      'title TEXT, '
+      'backDropPath TEXT, '
+      'voteAverage REAL, '
+      'overview TEXT, '
+      'poster_path TEXT, '
+      'genreIds TEXT, '
+      'releaseDate TEXT, '
+      'runtime INTEGER, '
+      'originalLanguage TEXT, '
+      'rating TEXT, '
+      'popularity REAL'
+      ')',
+    );
+  }
+
+  @action
+  Future<void> loadBookmarkedMovies() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('bookmarks');
+    bookmarkedMovies = ObservableList<Movie>.of(maps.map((map) => Movie.fromMap(map)).toList());
+  }
+
+  Future<void> saveBookmark(Movie movie) async {
+    final db = await database;
+    await db.insert(
+      'bookmarks',
+      movie.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<void> removeBookmark(Movie movie) async {
+    final db = await database;
+    await db.delete(
+      'bookmarks',
+      where: 'title = ?',
+      whereArgs: [
+        movie.title
+      ],
+    );
+  }
+
   @observable
   bool isDarkMode = false;
 
-  // App title
   @observable
   String title = '';
 
-  // Localization state
   @observable
   String selectedLanguage = 'en';
 
-  // Now Showing movies
   @observable
-  ObservableFuture<List<Movie>>? nowShowingMovies;
+  ObservableStream<List<Movie>>? searchResult;
 
-  // Popular movies
   @observable
-  ObservableFuture<List<Movie>>? popularMovies;
+  ObservableList<Movie> bookmarkedMovies = ObservableList<Movie>();
 
-  // Upcoming movies
-  @observable
-  ObservableFuture<List<Movie>>? upComingMovies;
-
-  // Search results using RxDart stream
-  @observable
-  ObservableStream<List<Movie>>? searchResultRx;
-
-  // Bookmarked movies as an observable list
-  @observable
-  ObservableList<Movie> bookmarkedMoviesRx = ObservableList<Movie>();
-
-  // Action to toggle the dark mode
   @action
   void toggleTheme() {
     isDarkMode = !isDarkMode;
   }
 
-  // Action to change the language
   @action
   void changeLanguage(String language) {
     selectedLanguage = language;
   }
 
-  // Check if a movie is bookmarked
   @action
-  bool isBookmarkedRx(Movie movie) {
-    return bookmarkedMoviesRx.contains(movie);
+  bool isBookmarked(Movie movie) {
+    return bookmarkedMovies.any((m) => m.title == movie.title);
   }
 
-  // Toggle bookmark status
   @action
-  void toggleBookmark(Movie movie) {
-    if (isBookmarkedRx(movie)) {
-      // Remove the movie from both MobX observable list and the global list
-      bookmarkedMoviesRx.remove(movie);
+  Future<void> toggleBookmark(Movie movie) async {
+    final db = await database;
+    if (isBookmarked(movie)) {
+      bookmarkedMovies.removeWhere((m) => m.title == movie.title);
+      await db.delete(
+        'bookmarks',
+        where: 'title = ?',
+        whereArgs: [
+          movie.title
+        ],
+      );
     } else {
-      // Add the movie to both MobX observable list and the global list
-      bookmarkedMoviesRx.add(movie);
+      bookmarkedMovies.add(movie);
+      await db.insert(
+        'bookmarks',
+        movie.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     }
+    print('Bookmarked Movies: ${bookmarkedMovies.length}');
+    bookmarkedMovies = ObservableList<Movie>.of(bookmarkedMovies);
   }
 
-  // Fetch Now Showing movies using Future
-  @action
-  Future<void> fetchNowShowingMovies() async {
-    nowShowingMovies = ObservableFuture(_apiService.getNowShowing());
-  }
-
-  // Fetch Popular movies using Future
-  @action
-  Future<void> fetchPopularMovies() async {
-    popularMovies = ObservableFuture(_apiService.getPopular());
-  }
-
-  // Set up RxDart stream for Now Showing movies
   @observable
-  ObservableStream<List<Movie>>? nowShowingMoviesRx;
+  ObservableStream<List<Movie>>? nowShowingMovies;
 
   @action
-  void listenToNowShowingWithRx() {
-    nowShowingMoviesRx = ObservableStream(_apiService.nowShowingMoviesStream);
-    _apiService.getNowShowingRX();
+  void listenToNowShowingMovies() {
+    nowShowingMovies = ObservableStream(_apiService.nowShowingMoviesStream);
+    _apiService.getNowShowingMovies();
   }
 
-  // Set up RxDart stream for Popular movies
   @observable
-  ObservableStream<List<Movie>>? popularMoviesRx;
+  ObservableStream<List<Movie>>? popularMovies;
 
   @action
-  void listenToPopularWithRx() {
-    popularMoviesRx = ObservableStream(_apiService.popularMoviesStream);
-    _apiService.getPopularRX();
+  void listenToPopularMovies() {
+    popularMovies = ObservableStream(_apiService.popularMoviesStream);
+    _apiService.getPopularMovies();
   }
 
-  // Set up RxDart stream for Upcoming movies
   @observable
-  ObservableStream<List<Movie>>? upcomingMoviesRx;
+  ObservableStream<List<Movie>>? upcomingMovies;
 
   @action
-  void listenToUpcomingWithRx() {
-    upcomingMoviesRx = ObservableStream(_apiService.upcomingMoviesStream);
-    _apiService.getUpcomingRX();
+  void listenToUpcomingMovies() {
+    upcomingMovies = ObservableStream(_apiService.upcomingMoviesStream);
+    _apiService.getUpcomingMovies();
   }
 
-  // Search movies with RxDart
   @action
-  void searchMovieWithRx(String query) {
-    _apiService.searchMoviesRX(query);
-    searchResultRx = ObservableStream(_apiService.searchMoviesStream);
+  void searchMovies(String query) {
+    _apiService.searchMovies(query);
+    searchResult = ObservableStream(_apiService.searchMoviesStream);
   }
 
-  // Dispose resources
-  void dispose() {
+  Future<void> dispose() async {
     _apiService.dispose();
+    final db = await database;
+    await db.close();
   }
 }

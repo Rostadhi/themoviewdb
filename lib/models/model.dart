@@ -1,5 +1,5 @@
-import 'package:otaku_movie_app/models/model_genre.dart';
-import 'package:otaku_movie_app/models/model_production.dart';
+import 'model_genre.dart';
+import 'model_production.dart';
 
 class Movie {
   final String? title;
@@ -55,16 +55,14 @@ class Movie {
       'title': title,
       'backDropPath': backDropPath,
       'voteAverage': voteAverage,
-      'overview': description,
-      'poster_path': posterPath,
-      'genres': genres?.map((genre) => genre.toMap()).toList(),
-      'genre_ids': genreIds, // Include genre IDs
-      'release_date': releaseDate,
+      'overview': description, // Must match the column name 'overview'
+      'poster_path': posterPath, // Must match the column name 'poster_path'
+      'genreIds': genreIds?.join(','), // Convert list to a comma-separated string
+      'releaseDate': releaseDate,
       'runtime': runtime,
-      'original_language': originalLanguage,
+      'originalLanguage': originalLanguage,
       'rating': rating,
       'popularity': popularity,
-      'production_companies': productionCompanies?.map((company) => company.toMap()).toList(),
     };
   }
 }

@@ -10,9 +10,9 @@ class MyHomePage extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback toggleTheme;
   final Function(Locale) setLocale;
-  final MovieStore store; // MobX store instance
+  final MovieStore store;
 
-  MyHomePage({
+  const MyHomePage({
     super.key,
     required this.isDarkMode,
     required this.toggleTheme,
@@ -61,8 +61,8 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Fetch movies when the widget is built
-    store.fetchNowShowingMovies();
-    store.fetchPopularMovies();
+    store.listenToNowShowingMovies();
+    store.listenToPopularMovies();
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -113,7 +113,10 @@ class MyHomePage extends StatelessWidget {
             Navigator.push(
               context,
               CupertinoPageRoute(
-                builder: (context) => SearchResultPage(isDarkMode: store.isDarkMode), // Navigate to the search page
+                builder: (context) => SearchResultPage(
+                  isDarkMode: store.isDarkMode,
+                  store: store,
+                ), // Navigate to the search page
               ),
             );
           }, // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
@@ -140,19 +143,19 @@ class MyHomePage extends StatelessWidget {
                 const SizedBox(height: 10),
                 Observer(
                   builder: (_) {
-                    if (store.nowShowingMovies == null || store.nowShowingMovies!.status == FutureStatus.pending) {
+                    if (store.popularMovies == null || store.popularMovies!.status == FutureStatus.pending) {
                       return const Center(child: CupertinoActivityIndicator());
-                    } else if (store.nowShowingMovies!.status == FutureStatus.rejected) {
-                      return Center(child: Text('Error: ${store.nowShowingMovies!.error}'));
-                    } else if (store.nowShowingMovies!.value == null || store.nowShowingMovies!.value!.isEmpty) {
+                    } else if (store.popularMovies!.status == FutureStatus.rejected) {
+                      return Center(child: Text('Error: ${store.popularMovies!.error}'));
+                    } else if (store.popularMovies!.value == null || store.popularMovies!.value!.isEmpty) {
                       return const Center(child: Text('No movies available.'));
                     }
 
-                    final movies = store.nowShowingMovies!.value!;
+                    final movies = store.popularMovies!.value!;
                     return SizedBox(
-                      height: 250,
+                      height: 250, // Adjust height as needed for the horizontal scroll area
                       child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
+                        scrollDirection: Axis.horizontal, // Set to horizontal scrolling
                         itemCount: movies.length,
                         itemBuilder: (context, index) {
                           final movie = movies[index];
@@ -245,12 +248,8 @@ class MyHomePage extends StatelessWidget {
                     }
 
                     final movies = store.popularMovies!.value!;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: movies.length,
-                      itemBuilder: (context, index) {
-                        final movie = movies[index];
+                    return Column(
+                      children: movies.map((movie) {
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -340,7 +339,7 @@ class MyHomePage extends StatelessWidget {
                             ),
                           ),
                         );
-                      },
+                      }).toList(),
                     );
                   },
                 ),

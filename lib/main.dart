@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final MovieStore store = MovieStore(); // Shared instance of MovieStore
+  final MovieStore store = MovieStore();
 
   void setLocale(Locale locale) {
     store.selectedLanguage = locale.languageCode;

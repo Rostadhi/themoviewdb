@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'bookmark.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:otaku_movie_app/mobx_store.dart';
+import 'package:otaku_movie_app/views/bookmark.dart';
 
 class UpcomingMovie extends StatelessWidget {
   final String title;
   final bool isDarkMode;
-
   final MovieStore store;
 
   const UpcomingMovie({
@@ -18,8 +17,8 @@ class UpcomingMovie extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Start listening to upcoming movies stream using RX Dart
-    store.listenToUpcomingWithRx();
+    store.initDatabase();
+    store.listenToUpcomingMovies();
 
     final textColor = isDarkMode ? CupertinoColors.white : CupertinoColors.black;
 
@@ -70,8 +69,7 @@ class UpcomingMovie extends StatelessWidget {
                 const SizedBox(height: 30),
                 Observer(
                   builder: (_) {
-                    // Observe the RX Dart stream-based observable for upcoming movies
-                    final upcomingMoviesStream = store.upcomingMoviesRx?.value;
+                    final upcomingMoviesStream = store.upcomingMovies?.value;
 
                     if (upcomingMoviesStream == null) {
                       return const Center(child: CupertinoActivityIndicator());
@@ -91,7 +89,7 @@ class UpcomingMovie extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Transform.scale(
-                              scale: index == store.bookmarkedMoviesRx.indexOf(movie) ? 1.0 : 0.9,
+                              scale: store.isBookmarked(movie) ? 1.0 : 0.9,
                               child: Column(
                                 children: [
                                   ClipRRect(
@@ -133,17 +131,22 @@ class UpcomingMovie extends StatelessWidget {
                                   const SizedBox(height: 15),
                                   Observer(
                                     builder: (_) {
+                                      store.bookmarkedMovies; // -> this is the key
+                                      final isBookmarked = store.isBookmarked(movie);
                                       return CupertinoButton(
                                         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                                        color: store.isBookmarkedRx(movie)
+                                        color: isBookmarked
                                             ? CupertinoColors.systemRed // Color when the movie is bookmarked
                                             : CupertinoColors.systemGrey5, // Color when the movie is not bookmarked
-                                        child: const Row(
+                                        child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(CupertinoIcons.bookmark),
-                                            SizedBox(width: 10),
-                                            Text('Bookmark'),
+                                            Icon(CupertinoIcons.bookmark, color: isBookmarked ? CupertinoColors.white : CupertinoColors.black),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              isBookmarked ? 'Bookmarked' : 'Bookmark',
+                                              style: TextStyle(color: isBookmarked ? CupertinoColors.white : CupertinoColors.black),
+                                            ),
                                           ],
                                         ),
                                         onPressed: () {
