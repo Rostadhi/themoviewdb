@@ -2,17 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:otaku_movie_app/mobx_store.dart';
 import 'package:otaku_movie_app/views/bookmark.dart';
+import 'package:otaku_movie_app/routing/app_routing.dart';
 
 class UpcomingMovie extends StatelessWidget {
   final String title;
   final bool isDarkMode;
   final MovieStore store;
+  final AppRouter router;
 
   const UpcomingMovie({
     super.key,
     required this.title,
     required this.isDarkMode,
     required this.store,
+    required this.router,
   });
 
   @override
@@ -30,19 +33,7 @@ class UpcomingMovie extends StatelessWidget {
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          onPressed: () {
-            // Navigate to BookmarkPage and pass the bookmarkedMovies list from MobX store
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => BookmarkPage(
-                  title: 'Bookmarked Movies',
-                  isDarkMode: isDarkMode,
-                  store: store,
-                ),
-              ),
-            );
-          },
+          onPressed: () => router.navigateToBookmarkPage(context),
           child: Icon(
             CupertinoIcons.bookmark,
             color: textColor,

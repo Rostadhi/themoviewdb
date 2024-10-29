@@ -5,20 +5,24 @@ import '../views/sub_view/detail_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:otaku_movie_app/mobx_store.dart';
+import 'package:otaku_movie_app/routing/app_routing.dart';
 
 class MyHomePage extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback toggleTheme;
   final Function(Locale) setLocale;
   final MovieStore store;
+  late final AppRouter router;
 
-  const MyHomePage({
+  MyHomePage({
     super.key,
     required this.isDarkMode,
     required this.toggleTheme,
     required this.setLocale,
     required this.store,
-  });
+  }) {
+    router = AppRouter(store: store, isDarkMode: isDarkMode, title: '');
+  }
 
   void _showLanguageSelection(BuildContext context) {
     showCupertinoModalPopup(
@@ -108,18 +112,7 @@ class MyHomePage extends StatelessWidget {
             CupertinoIcons.search,
             color: store.isDarkMode ? CupertinoColors.white : CupertinoColors.black,
           ),
-          onPressed: () {
-            // Navigate to the SearchResultPage
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => SearchResultPage(
-                  isDarkMode: store.isDarkMode,
-                  store: store,
-                ), // Navigate to the search page
-              ),
-            );
-          }, // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
+          onPressed: () => router.navigateToSearchPage(context), // make search is actionable -> make keyboard appear and textable after user typing some keyword it can press enter and then after that go to the search result
         ),
         backgroundColor: store.isDarkMode ? CupertinoColors.black.withOpacity(0.8) : CupertinoColors.white,
       ),
@@ -160,18 +153,7 @@ class MyHomePage extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final movie = movies[index];
                           return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => DetailScreen(
-                                    movie: movie,
-                                    isDarkMode: store.isDarkMode,
-                                    store: store,
-                                  ),
-                                ),
-                              );
-                            },
+                            onTap: () => router.navigateToDetailPage(context, movie),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(

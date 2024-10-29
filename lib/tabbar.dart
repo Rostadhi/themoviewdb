@@ -3,12 +3,14 @@ import 'package:otaku_movie_app/views/home.dart';
 import 'package:otaku_movie_app/views/upcoming_movie.dart';
 import 'package:otaku_movie_app/views/bookmark.dart';
 import 'package:otaku_movie_app/mobx_store.dart';
+import 'package:otaku_movie_app/routing/app_routing.dart';
 
 class MainTabBar extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback toggleTheme;
   final Function(Locale) setLocale;
   final MovieStore store;
+  final AppRouter router;
 
   const MainTabBar({
     super.key,
@@ -16,6 +18,7 @@ class MainTabBar extends StatelessWidget {
     required this.toggleTheme,
     required this.setLocale,
     required this.store,
+    required this.router,
   });
 
   @override
@@ -42,6 +45,7 @@ class MainTabBar extends StatelessWidget {
               title: "Upcoming Movie",
               isDarkMode: isDarkMode,
               store: store,
+              router: router,
             );
           case 2:
             return BookmarkPage(
